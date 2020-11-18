@@ -126,6 +126,15 @@ class TopFilesTestCase(unittest.TestCase):
         }
         self.assertDictEqual(result, expected)
 
+    def test_compute_tfidfs_handles_unknown_query_terms(self):
+        query = set(['a', 'b', 'c', 'foo', 'bar'])
+        result = questions.compute_sum_tfidfs(query, self.files, self.idfs)
+        expected = {
+            'x': 1 * self.idfs['a'] + 1 * self.idfs['b'] + 1 * self.idfs['c'],
+            'y': 0 * self.idfs['a'] + 1 * self.idfs['b'] + 1 * self.idfs['c'],
+            'z': 0 * self.idfs['a'] + 0 * self.idfs['b'] + 1 * self.idfs['c'],                 
+        }
+        self.assertDictEqual(result, expected)
 
     def test_return_type_is_list(self):
         result = questions.top_files(self.query, self.files, self.idfs, 1)
@@ -183,6 +192,15 @@ class TopSentencesTestCase(unittest.TestCase):
         }
         self.assertDictEqual(result, expected)
 
+    def test_compute_mwm_qtd_handles_unknown_query_terms(self):
+        query = set(['a', 'b', 'c', 'foo', 'bar'])
+        result = questions.compute_mwm_qtd(query, self.sentences, self.idfs)
+        expected = {
+            'abcde': (0.5 + 0.5 + 0, 3/5),
+            'cbefg': (0 + 0.5 + 0, 2/5),
+            'aghia': (0 + 0.5 + 0, 1/5),                 
+        }
+        self.assertDictEqual(result, expected)
 
     def test_return_type_is_list(self):
         result = questions.top_sentences(self.query, self.sentences, self.idfs, 1)
@@ -226,6 +244,7 @@ def suite():
     suite.addTest(ComputeIdfsTestCase('test_output_is_correct'))
     
     suite.addTest(TopFilesTestCase('test_compute_tfidfs'))
+    suite.addTest(TopFilesTestCase('test_compute_tfidfs_handles_unknown_query_terms'))
     suite.addTest(TopFilesTestCase('test_return_type_is_list'))
     suite.addTest(TopFilesTestCase('test_output_length'))
     suite.addTest(TopFilesTestCase('test_output_is_correct'))

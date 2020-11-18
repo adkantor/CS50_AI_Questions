@@ -148,7 +148,7 @@ def get_words(documents):
 
 def compute_sum_tfidfs(query, files, idfs):
     """
-    Calculates sum of tf-idfs.
+    Calculates sum of tf-idfs (number of times the term appears in the document * the IDF value for that term).
 
     @param query    set of words
     @param files    dictionary mapping names of files to a list of their words
@@ -158,12 +158,7 @@ def compute_sum_tfidfs(query, files, idfs):
     """
     sum_tfidfs = {}
     for filename, words in files.items():
-        sum_tfidf = 0
-        for term in query:
-            # calculate tf-idf
-            # tf-idf = number of times the term appears in the document * the IDF value for that term
-            tfidf = words.count(term) * idfs[term]
-            sum_tfidf += tfidf
+        sum_tfidf = sum([words.count(term) * idfs[term] for term in query if term in words])
         sum_tfidfs[filename] = sum_tfidf
     return sum_tfidfs
 
